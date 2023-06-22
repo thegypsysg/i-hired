@@ -1,13 +1,16 @@
 <template>
   <div>
     <Banner />
-    <TrendingApps />
+    <v-container>
+      <TrendingApps />
+    </v-container>
+    <hr />
   </div>
 </template>
 
 <script setup>
 import Banner from '@/components/Banner.vue';
-import TrendingApps from './TrendingApps.vue';
+import TrendingApps from '@/components/TrendingApps.vue';
 </script>
 
 <script>
@@ -18,7 +21,6 @@ export default {
       drawer: false,
     };
   },
-  components: { TrendingApps },
 };
 </script>
 

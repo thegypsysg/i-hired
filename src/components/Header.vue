@@ -1,19 +1,16 @@
 <template>
   <v-app-bar
-    :class="{
-      'app-bar-mobile-1': isSmall && isHome,
-      'app-bar-mobile-2': isSmall && !isHome,
-    }"
+    :class="{ 'app-bar-mobile': isSmall }"
     color="white"
     elevation="1"
     fixed
   >
     <router-link to="/">
-      <div class="logo-img-container d-flex align-center">
+      <div class="logo-img-container">
         <v-img
           class="logo-img"
-          src="@/assets/image/logo.png"
-          height="50"
+          src="@/assets/images/logo/logo.png"
+          height="90"
           :class="{ 'ml-8': isWelcome }"
         >
           <template #placeholder>
@@ -32,8 +29,7 @@
         id="product_name"
         class="form-control mr-sm-2"
         type="text"
-        style="font-style: italic"
-        placeholder="Type your brands... Chivas , Monkey , Roku , Glennfidich"
+        placeholder="Type anything that you are looking for "
         aria-label="Search"
         data-autocompleturl="https://boozards.com/merchant-product/search"
       />
@@ -41,7 +37,7 @@
         <v-icon color="white"> mdi-magnify </v-icon>
       </button>
     </form>
-    <div v-if="!isWelcome && !isSmall" class="desktop__app">
+    <div v-if="!isWelcome" class="desktop__app">
       <v-menu>
         <template #activator="{ props }">
           <v-btn
@@ -73,27 +69,18 @@
     <v-btn v-if="!isWelcome" elevation="0" class="btn_sign__up" to="/welcome">
       Sign up / Register
     </v-btn>
-    <div v-if="!isSmall" class="cart d-flex align-center">
-      <div class="cart-line mr-2" />
-      <v-icon size="35" color="black"> mdi mdi-cart-variant </v-icon>
-      <span>S$ 0</span>
-    </div>
-    <v-btn
-      style="background: #ffa42e; border-radius: 0 !important"
-      v-if="!isWelcome"
-      icon
-      @click="drawer = !drawer"
-    >
-      <v-icon size="35" color="#fff"> mdi mdi-menu </v-icon>
+    <v-btn v-if="!isWelcome" icon @click="drawer = !drawer">
+      <v-img
+        src="@/assets/images/icons/user_icon.png"
+        style="height: 48px; width: auto"
+      />
     </v-btn>
 
     <template v-if="!isWelcome" #extension>
       <div
-        v-if="isSmall"
-        class="text-center scroll-container d-flex flex-column justify-center align-content-space-between mx-2"
-        :class="{ 'mb-n10': !isHome }"
+        class="mobile__app text-center scroll-container d-flex flex-column justify-center align-content-space-between mx-2"
       >
-        <div v-if="isHome">
+        <div>
           <v-menu>
             <template #activator="{ props }">
               <v-btn
@@ -130,7 +117,7 @@
             id="product_name"
             class="form-control mr-sm-2"
             type="text"
-            placeholder="Type your brands... Chivas , Monkey , Roku , Glennfidich"
+            placeholder="Type anything that you are looking for "
             aria-label="Search"
             data-autocompleturl="https://boozards.com/merchant-product/search"
           />
@@ -139,7 +126,7 @@
           </button>
         </form>
 
-        <div v-if="isHome" class="my-slide d-flex">
+        <div class="my-slide d-flex">
           <v-btn
             class="sub-menu-btn view-all"
             :class="{
@@ -218,7 +205,7 @@ import app from '@/util/eventBus';
 // import eventBus from "@/util/eventBus";
 
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
+  // eslint-disable-next-line vue/multi-word-component-names, vue/no-reserved-component-names
   name: 'Header',
   props: ['isWelcome'],
   data() {
@@ -351,26 +338,23 @@ export default {
     isSmall() {
       return this.screenWidth < 640;
     },
-    isHome() {
-      return this.$route.path === '/';
-    },
     ...mapState(['activeTag']),
     trendingBtn() {
       return [
         {
           title: 'View All',
         },
-        { title: 'Whisky', tag: 'Whisky' },
-        { title: 'Gin', tag: 'Gin' },
-        { title: 'Beer', tag: 'Beer' },
-        {
-          title: 'Wine',
-          tag: 'Wine',
-        },
-        {
-          title: 'Single Malt',
-          tag: 'Single Malt',
-        },
+        { title: 'Promo App', tag: 'Promo App' },
+        { title: 'Alcohol App', tag: 'Alcohol App' },
+        { title: 'Jobs App', tag: 'Job App' },
+        { title: 'On The Run Apps', tag: 'On the Run App' },
+        { title: 'Housing App', tag: 'Housing App' },
+        { title: 'Travel App', tag: 'Travel App' },
+        { title: 'Staycation App', tag: 'Staycation App' },
+        { title: 'Listings App', tag: 'Listing App' },
+        { title: 'Tournaments App', tag: 'Tournament App' },
+        { title: 'Cafe App', tag: 'Cafe App' },
+        { title: 'Overseas Study App', tag: 'Overseas Study App' },
       ];
     },
   },
@@ -434,11 +418,8 @@ export default {
 .v-app-bar.v-toolbar {
   max-width: 100%;
 }
-.app-bar-mobile-1 {
+.app-bar-mobile {
   height: 29vh;
-}
-.app-bar-mobile-2 {
-  height: 17vh;
 }
 
 .divider {
@@ -470,20 +451,10 @@ export default {
   height: 100%;
 }
 
-.cart {
-  width: 100px;
+.v-list-cont {
+  flex-direction: column;
+  gap: 20px;
 }
-
-.cart:hover {
-  cursor: pointer;
-}
-
-.cart-line {
-  height: 25px;
-  width: 1px;
-  background: black;
-}
-
 .skeleton {
   width: 100%;
   height: 100%;
@@ -492,11 +463,6 @@ export default {
   background: linear-gradient(-90deg, #f2f2f2 0%, #e1e1e1 50%, #f2f2f2 100%);
   background-size: 400% 400%;
   animation: skeleton 1.6s ease infinite;
-}
-
-.v-list-cont {
-  flex-direction: column;
-  gap: 20px;
 }
 
 @keyframes skeleton {

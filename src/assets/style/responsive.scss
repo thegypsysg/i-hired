@@ -12,6 +12,9 @@
   .desktop__app {
     display: block;
   }
+  .mobile__app {
+    display: none;
+  }
 }
 @media (max-width: 959px) {
   .partners_box {
@@ -29,7 +32,7 @@
     line-height: 22px !important;
   }
   .bg-image {
-    background-image: url('@/assets/image/banner-home.jpg') !important;
+    background-image: url('@/assets/images/banner-mobile.png') !important;
     margin-top: 28vh !important;
   }
 
@@ -49,8 +52,11 @@
   header.v-sheet.v-app-bar {
     height: 160px !important;
   }
-  .desktop__app {
+  .mobile__app {
     display: block;
+  }
+  .desktop__app {
+    display: none;
   }
   .navbar__search__desktop {
     display: none;
@@ -115,20 +121,17 @@
     line-height: 20px;
   }
   .footer_lks {
-    padding: 16px 20px;
+    padding: 16px 40px;
   }
 }
 @media (max-width: 599px) {
   .bg-image {
-    background-image: url('@/assets/image/banner-home.jpg') !important;
+    background-image: url('@/assets/images/banner-mobile.png') !important;
     margin-top: 28vh !important;
     min-height: 40vh !important;
   }
   .navbar__search {
-    width: 350px !important;
-  }
-  .navbar__search__mobile {
-    width: 350px !important;
+    max-width: 300px !important;
   }
   .trending__app__wrapper .v-col-sm-6 {
     flex: 0 0 50%;
