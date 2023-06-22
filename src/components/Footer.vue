@@ -2,7 +2,7 @@
   <v-container class="mt-6 footer_lks">
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="3">
-        <h2 class="footer_title">About Boozards</h2>
+        <h2 class="footer_title">About The Syringe</h2>
         <p
           class="footer_paragraph"
           style="margin-bottom: 16px; margin-top: 34px"
@@ -70,7 +70,7 @@
         </ul>
       </v-col>
       <v-col cols="12" sm="12" md="3">
-        <h2 class="footer_title">Our Booze</h2>
+        <h2 class="footer_title">Job Categories</h2>
         <v-row
           class="footer_apps"
           style="margin-top: 37px; padding-right: 20px"
@@ -84,7 +84,7 @@
                 class="our-apps-img"
                 cover
                 transition="fade-transition"
-                src="@/assets/image/brand1.png"
+                src="@/assets/nurse-jobs.jpg"
               >
                 <template #placeholder>
                   <div class="skeleton" />
@@ -101,7 +101,7 @@
                 class="our-apps-img"
                 cover
                 transition="fade-transition"
-                src="@/assets/image/brand2.png"
+                src="@/assets/allied-jobs.jpg"
               >
                 <template #placeholder>
                   <div class="skeleton" />
@@ -118,7 +118,7 @@
                 cover
                 class="our-apps-img"
                 transition="fade-transition"
-                src="@/assets/image/brand3.png"
+                src="@/assets/doctor-jobs.jpg"
               >
                 <template #placeholder>
                   <div class="skeleton" />
@@ -135,7 +135,7 @@
                 cover
                 class="our-apps-img"
                 transition="fade-transition"
-                src="@/assets/image/brandy.png"
+                src="@/assets/job-detail-banner.jpg"
               >
                 <template #placeholder>
                   <div class="skeleton" />
@@ -162,7 +162,7 @@
         </v-row>
       </v-col>
       <v-col cols="12" sm="12" md="3">
-        <h2 class="footer_title">Boozards</h2>
+        <h2 class="footer_title">Jobseekers</h2>
         <p
           class="footer_paragraph"
           style="margin-bottom: 16px; margin-top: 34px"
@@ -186,10 +186,7 @@
     </v-row>
   </v-container>
 
-  <v-footer
-    class="bg-black text-center footer__content"
-    :class="{ 'mb-16 pb-4': isSmall }"
-  >
+  <v-footer class="bg-black text-center footer__content">
     <v-spacer></v-spacer>
     <div style="display: flex; justify-content: center">
       <v-btn variant="text" color="#FA2964" icon="mdi-facebook" />
@@ -205,23 +202,6 @@
   >
     <i class="fa fa-angle-double-up" aria-hidden="true"></i>
   </a>
-  <div
-    v-if="isSmall"
-    class="cart-mobile d-flex align-center justify-space-between px-2"
-  >
-    <div class="cart-title py-4">
-      <v-icon class="cart-title-icon" size="40" color="black">
-        mdi mdi-cart-variant
-      </v-icon>
-      <div class="cart-title-count d-flex justify-center align-center">
-        <span>0</span>
-      </div>
-      <span class="ml-4">My Cart</span>
-    </div>
-    <div class="cart-count d-flex align-center justify-center">
-      <span>S$0</span>
-    </div>
-  </div>
 </template>
 
 <script>

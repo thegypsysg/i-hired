@@ -6,11 +6,11 @@
     fixed
   >
     <router-link to="/">
-      <div class="logo-img-container">
+      <div class="logo-img-container d-flex align-center">
         <v-img
           class="logo-img"
-          src="@/assets/images/logo/logo.png"
-          height="90"
+          src="@/assets/logo-i-hired.png"
+          height="30"
           :class="{ 'ml-8': isWelcome }"
         >
           <template #placeholder>
@@ -341,20 +341,16 @@ export default {
     ...mapState(['activeTag']),
     trendingBtn() {
       return [
-        {
-          title: 'View All',
-        },
-        { title: 'Promo App', tag: 'Promo App' },
-        { title: 'Alcohol App', tag: 'Alcohol App' },
-        { title: 'Jobs App', tag: 'Job App' },
-        { title: 'On The Run Apps', tag: 'On the Run App' },
-        { title: 'Housing App', tag: 'Housing App' },
-        { title: 'Travel App', tag: 'Travel App' },
-        { title: 'Staycation App', tag: 'Staycation App' },
-        { title: 'Listings App', tag: 'Listing App' },
-        { title: 'Tournaments App', tag: 'Tournament App' },
-        { title: 'Cafe App', tag: 'Cafe App' },
-        { title: 'Overseas Study App', tag: 'Overseas Study App' },
+        { title: 'Tech Jobs', tag: 'Tech Jobs' },
+        { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
+        { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
+        { title: 'Intern Jobs', tag: 'Intern Jobs' },
+        { title: 'Temp Jobs', tag: 'Temp Jobs' },
+        { title: 'Tech Jobs', tag: 'Tech Jobs' },
+        { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
+        { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
+        { title: 'Intern Jobs', tag: 'Intern Jobs' },
+        { title: 'Temp Jobs', tag: 'Temp Jobs' },
       ];
     },
   },
