@@ -1,0 +1,510 @@
+<template>
+  <v-app-bar
+    :class="{
+      'app-bar-mobile-1': isSmall && isHome,
+      'app-bar-mobile-2': isSmall && !isHome,
+    }"
+    color="white"
+    elevation="1"
+    fixed
+  >
+    <router-link to="/">
+      <div class="logo-img-container d-flex align-center">
+        <v-img
+          class="logo-img"
+          src="@/assets/image/logo.png"
+          height="50"
+          :class="{ 'ml-8': isWelcome }"
+        >
+          <template #placeholder>
+            <div class="skeleton" />
+          </template>
+        </v-img>
+      </div>
+    </router-link>
+    <div v-if="isWelcome" class="ml-10 d-flex flex-row header-info">
+      <div v-if="!isSmall" class="divider" />
+      <span :class="{ 'header-info-span': isSmall }">Sign Up / Login</span>
+    </div>
+    <v-spacer v-if="isWelcome" />
+    <form v-if="!isWelcome" class="navbar__search navbar__search__desktop">
+      <input
+        id="product_name"
+        class="form-control mr-sm-2"
+        type="text"
+        style="font-style: italic"
+        placeholder="Type your brands... Chivas , Monkey , Roku , Glennfidich"
+        aria-label="Search"
+        data-autocompleturl="https://boozards.com/merchant-product/search"
+      />
+      <button class="btn btn--search" type="submit">
+        <v-icon color="white"> mdi-magnify </v-icon>
+      </button>
+    </form>
+    <div v-if="!isWelcome && !isSmall" class="desktop__app">
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            style="
+              margin-left: 30px;
+              margin-right: 30px;
+              font-size: 16px;
+              color: #494949;
+            "
+            v-bind="props"
+            variant="text"
+          >
+            {{ itemSelected }}
+            <v-icon right dark> mdi-menu-down </v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in items"
+            :key="index"
+            :value="index"
+            @click="itemSelected = item.title"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
+    <v-btn v-if="!isWelcome" elevation="0" class="btn_sign__up" to="/welcome">
+      Sign up / Register
+    </v-btn>
+    <div v-if="!isSmall" class="cart d-flex align-center">
+      <div class="cart-line mr-2" />
+      <v-icon size="35" color="black"> mdi mdi-cart-variant </v-icon>
+      <span>S$ 0</span>
+    </div>
+    <v-btn
+      style="background: #ffa42e; border-radius: 0 !important"
+      v-if="!isWelcome"
+      icon
+      @click="drawer = !drawer"
+    >
+      <v-icon size="35" color="#fff"> mdi mdi-menu </v-icon>
+    </v-btn>
+
+    <template v-if="!isWelcome" #extension>
+      <div
+        v-if="isSmall"
+        class="text-center scroll-container d-flex flex-column justify-center align-content-space-between mx-2"
+        :class="{ 'mb-n10': !isHome }"
+      >
+        <div v-if="isHome">
+          <v-menu>
+            <template #activator="{ props }">
+              <v-btn
+                style="
+                  margin-left: 30px;
+                  margin-right: 30px;
+                  font-size: 16px;
+                  color: #494949;
+                "
+                v-bind="props"
+                variant="text"
+              >
+                {{ itemSelected }}
+                <v-icon right dark> mdi-menu-down </v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="index"
+                :value="index"
+                @click="itemSelected = item.title"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+        <form
+          class="navbar__search navbar__search__mobile mx-auto"
+          @submit="preventSubmit"
+        >
+          <input
+            id="product_name"
+            class="form-control mr-sm-2"
+            type="text"
+            placeholder="Type your brands... Chivas , Monkey , Roku , Glennfidich"
+            aria-label="Search"
+            data-autocompleturl="https://boozards.com/merchant-product/search"
+          />
+          <button class="btn btn--search" type="submit">
+            <v-icon color="white"> mdi-magnify </v-icon>
+          </button>
+        </form>
+
+        <div v-if="isHome" class="my-slide d-flex">
+          <v-btn
+            class="sub-menu-btn view-all"
+            :class="{
+              active: isSelected,
+            }"
+            style="box-shadow: 0 5px 25px rgba(0, 0, 0, 0)"
+            @click="selectTag('')"
+          >
+            <p style="font-size: 12px" elevation>View All</p>
+            <!-- <span class="badge" :class="isSelected ? 'active' : ''"
+            >2.7K</span
+          > -->
+          </v-btn>
+          <v-slide-group v-model="activeTag">
+            <v-slide-group-item
+              v-for="(btn, index) in trendingBtn"
+              :key="btn.tag"
+              v-slot="{ isSelected }"
+              :value="btn.tag"
+            >
+              <v-btn
+                v-if="index !== 0 && btn.title != 'View All'"
+                class="sub-menu-btn"
+                :class="{
+                  active: isSelected,
+                }"
+                style="box-shadow: 0 5px 25px rgba(0, 0, 0, 0)"
+                @click="selectTag(btn.tag)"
+              >
+                <p style="font-size: 12px" elevation>
+                  {{ btn.title }}
+                  <span>{{
+                    countCards(btn.tag) == 0 ? '' : `(${countCards(btn.tag)})`
+                  }}</span>
+                </p>
+                <!-- <span class="badge" :class="isSelected ? 'active' : ''"
+                >2.7K</span
+              > -->
+              </v-btn>
+            </v-slide-group-item>
+          </v-slide-group>
+        </div>
+      </div>
+    </template>
+  </v-app-bar>
+  <v-navigation-drawer
+    v-if="!isWelcome || (isWelcome && isSmall)"
+    v-model="drawer"
+    temporary
+    location="right"
+  >
+    <div class="drawer__top">
+      <a style="font-size: 1.125rem; color: white">Sign up / Register</a>
+    </div>
+    <ul class="v-list-cont d-flex mt-4" nav dense>
+      <li class="v-list-item">
+        <v-list-item-title>Home</v-list-item-title>
+      </li>
+
+      <li class="v-list-item">
+        <v-list-item-title>Employer</v-list-item-title>
+      </li>
+
+      <li class="v-list-item">
+        <v-list-item-title>Agency</v-list-item-title>
+      </li>
+    </ul>
+  </v-navigation-drawer>
+</template>
+
+<script>
+import { mapState, mapMutations } from 'vuex';
+import app from '@/util/eventBus';
+
+// import eventBus from "@/util/eventBus";
+// import eventBus from "@/util/eventBus";
+
+export default {
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Header',
+  props: ['isWelcome'],
+  data() {
+    return {
+      // selectedTag: null,
+      // trendingBtn: [
+      //   {
+      //     title: "View All",
+      //   },
+      //   { title: "Promo App", tag: "Promo App" },
+      //   { title: "Alcohol App", tag: "Alcohol App" },
+      //   { title: "Jobs App", tag: "Job App" },
+      //   { title: "On The Run Apps", tag: "On the Run App" },
+      //   { title: "Housing App", tag: "Housing App" },
+      //   { title: "Travel App", tag: "Travel App" },
+      //   { title: "Staycation App", tag: "Staycation App" },
+      //   { title: "Listings App", tag: "Listing App" },
+      //   { title: "Tournaments App", tag: "Tournament App" },
+      //   { title: "Cafe App", tag: "Cafe App" },
+      //   { title: "Overseas Study App", tag: "Overseas Study App" },
+      // ],
+      drawer: false,
+      itemSelected: 'Singapore',
+      items: [
+        { title: 'Singapore', path: '#' },
+        { title: 'Mumbai', path: '#' },
+        { title: 'Goa', path: '#' },
+        { title: 'Kuala Lumpur', path: '#' },
+      ],
+
+      trendingCard: [
+        {
+          img: 'assets/gypsy-1.png',
+          title: 'Mall-e',
+          desc: 'Promotions Happening in Malls',
+          tag: 'Promo App',
+        },
+        {
+          img: 'assets/gypsy-2.png',
+          title: 'Boozards',
+          desc: 'Marketplace for Alcohol, Clubs, Happy Hours',
+          tag: 'Alcohol App',
+        },
+        {
+          img: 'assets/gypsy-3.png',
+          title: 'Flea',
+          desc: 'Promotions Happening in Streets , Office Buildings Gas Stations etc',
+          tag: 'Promo App',
+        },
+        {
+          img: 'assets/gypsy-4.png',
+          title: 'Mendesliga',
+          desc: 'Marketplace for Sports Tournaments.',
+          tag: 'Tournament App',
+        },
+        {
+          img: 'assets/gypsy-5.png',
+          title: 'Cake Run',
+          desc: 'Marketplace for all Types of Cakes.',
+          tag: 'On the Run App',
+        },
+        {
+          img: 'assets/gypsy-6.png',
+          title: 'Cafino',
+          desc: 'Maketplace for Cafes around you.',
+          tag: 'Cafe App',
+        },
+        {
+          img: 'assets/gypsy-7.jpg',
+          title: '4 Walls',
+          desc: 'Marketplace for Housing',
+          tag: 'Housing App',
+        },
+        {
+          img: 'assets/gypsy-8.jpg',
+          title: 'Staycasey',
+          desc: 'Marketplace for Staycation',
+          tag: 'Staycation App',
+        },
+        {
+          img: 'assets/gypsy-9.jpg',
+          title: 'Astalavista',
+          desc: 'Marketplace for Overseas Travel',
+          tag: 'Travel App',
+        },
+        {
+          img: 'assets/gypsy-10.jpg',
+          title: 'i-Study',
+          desc: 'Marketplace for Study Overseas',
+          tag: 'Overseas Study App',
+        },
+        {
+          img: 'assets/gypsy-11.jpg',
+          title: 'Mart-In',
+          desc: 'Marketplace for Mini Mart',
+          tag: 'Mini Mart App',
+        },
+        {
+          img: 'assets/gypsy-12.jpg',
+          title: 'Biryani-Run',
+          desc: 'Marketplace for Biryani',
+          tag: 'On the Run App',
+        },
+        {
+          img: 'assets/gypsy-13.jpg',
+          title: 'i-Hired',
+          desc: 'Marketplace for Jobs',
+          tag: 'Job App',
+        },
+        {
+          img: 'assets/gypsy-14.jpg',
+          title: 'Pizza Run',
+          desc: 'Marketplace for Pizza',
+          tag: 'On the Run App',
+        },
+        {
+          img: 'assets/gypsy-15.jpg',
+          title: 'Listings',
+          desc: 'Marketplace for Listings',
+          tag: 'Listing App',
+        },
+      ],
+
+      selectedType: 0,
+      activeIndex: 1,
+      screenWidth: window.innerWidth,
+    };
+  },
+  computed: {
+    isSmall() {
+      return this.screenWidth < 640;
+    },
+    isHome() {
+      return this.$route.path === '/';
+    },
+    ...mapState(['activeTag']),
+    trendingBtn() {
+      return [
+        {
+          title: 'View All',
+        },
+        { title: 'Whisky', tag: 'Whisky' },
+        { title: 'Gin', tag: 'Gin' },
+        { title: 'Beer', tag: 'Beer' },
+        {
+          title: 'Wine',
+          tag: 'Wine',
+        },
+        {
+          title: 'Single Malt',
+          tag: 'Single Malt',
+        },
+      ];
+    },
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize);
+  },
+  unmounted() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+  methods: {
+    ...mapMutations(['setActiveTag']),
+    selectTag(tag) {
+      this.setActiveTag(tag); // Menetapkan tag yang dipilih sebagai tag aktif
+
+      app.config.globalProperties.$eventBus.$emit('scrollToCardSection');
+    },
+    // emitFilterEvent(tag) {
+    //   this.$emit("filter-card", tag);
+    // },
+    // filterCards(tag) {
+    //   this.selectedTag = tag;
+    //   app.config.globalProperties.$eventBus.$emit("filter-card-header", tag);
+    //   // eventBus.emit("filter-card-header", tag);
+    // },
+    countCards(tag) {
+      const count = this.trendingCard.filter(
+        (trend) => trend.tag === tag
+      ).length;
+      return count;
+    },
+    handleResize() {
+      this.screenWidth = window.innerWidth;
+    },
+    previousSlide() {
+      this.activeIndex--;
+    },
+    nextSlide() {
+      this.activeIndex++;
+    },
+    preventSubmit(event) {
+      event.preventDefault();
+    },
+  },
+};
+</script>
+
+<style scoped>
+.view-all {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 1000 !important;
+  /* Gaya view all yang sticky */
+}
+.scroll-container {
+  margin-top: -80px;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 20px;
+}
+.v-app-bar.v-toolbar {
+  max-width: 100%;
+}
+.app-bar-mobile-1 {
+  height: 29vh;
+}
+.app-bar-mobile-2 {
+  height: 17vh;
+}
+
+.divider {
+  background: rgb(173, 173, 173);
+  width: 2px;
+  height: 70px;
+}
+
+.header-info {
+  align-items: center;
+  gap: 25px;
+  font-size: 30px;
+  color: black;
+  font-weight: 800;
+}
+
+.header-info-span {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.logo-img-container {
+  height: 80px;
+  min-width: 100px;
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+}
+
+.cart {
+  width: 100px;
+}
+
+.cart:hover {
+  cursor: pointer;
+}
+
+.cart-line {
+  height: 25px;
+  width: 1px;
+  background: black;
+}
+
+.skeleton {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  z-index: 10000;
+  background: linear-gradient(-90deg, #f2f2f2 0%, #e1e1e1 50%, #f2f2f2 100%);
+  background-size: 400% 400%;
+  animation: skeleton 1.6s ease infinite;
+}
+
+.v-list-cont {
+  flex-direction: column;
+  gap: 20px;
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+</style>

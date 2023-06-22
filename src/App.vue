@@ -1,30 +1,48 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <v-app>
+    <div>
+      <Header :is-welcome="currentRoute === '/welcome' ? true : false" />
+      <RouterView v-slot="{ Component }">
+        <Transition name="page-opacity" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
+      <Footer />
+    </div>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import { RouterView } from 'vue-router';
+import Header from './components/Header.vue';
+import Footer from '@/components/Footer.vue';
+
+export default {
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: { RouterView, Header, Footer },
+  data() {
+    return {
+      currentRoute: this.$route.path,
+    };
+  },
+  watch: {
+    $route: function () {
+      this.currentRoute = this.$route.path;
+    },
+  },
+};
+</script>
+
+<style>
+@import '@/assets/style/App.scss';
+
+.page-opacity-enter-active,
+.page-opacity-leave-active {
+  transition: 400ms ease all;
 }
 
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.page-opacity-enter-from,
+.page-opacity-leave-to {
+  opacity: 0;
 }
 </style>
