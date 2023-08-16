@@ -389,10 +389,8 @@ header {
 .bg-image {
   margin-top: 90px;
   min-height: calc(100vh - 90px);
-  //object-fit: cover !important;
-  background-image: url('@/assets/i-hired-main.jpg');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
 }
 .bg-image img {
   object-fit: cover !important;

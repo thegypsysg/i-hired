@@ -127,6 +127,7 @@
                         <h2>{{ card.title }}</h2>
                         <p>{{ card.desc }}</p>
                         <v-btn
+                          :to="`/${card.path}`"
                           elevation="4"
                           style="
                             background-color: #ffa42e;
@@ -139,7 +140,7 @@
                             font-size: 12px;
                           "
                         >
-                          <span class="text-black" style="">VIEW PRICES</span>
+                          <span class="text-black" style="">VIEW JOBS</span>
                         </v-btn>
                       </div>
                     </div>
@@ -198,6 +199,7 @@
                         <h2>{{ card.title }}</h2>
                         <p>{{ card.desc }}</p>
                         <v-btn
+                          :to="`/${card.path}`"
                           elevation="4"
                           style="
                             background-color: #ffa42e;
@@ -208,7 +210,7 @@
                             padding-bottom: 10px;
                           "
                         >
-                          <span class="text-black" style="">VIEW PRICES</span>
+                          <span class="text-black" style="">VIEW JOBS</span>
                         </v-btn>
                       </div>
                     </div>
@@ -244,11 +246,12 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'TrendingApps',
+  props: ['trendingCard', 'trendingBtn'],
   data() {
     return {
       selectedTag: null,
       // activeTagHeader: null,
-      // trendingBtn: [
+      // trendingBtn: [],
       //   {
       //     title: "View All",
       //   },
@@ -264,39 +267,6 @@ export default {
       //   { title: "Cafe App", tag: "Cafe App" },
       //   { title: "Overseas Study App", tag: "Overseas Study App" },
       // ],
-      trendingCard: [
-        {
-          img: require('@/assets/nurse.png'),
-          title: 'Healthcare Jobs',
-          tag: 'Healthcare Jobs',
-        },
-        {
-          img: require('@/assets/doctor-jobs.jpg'),
-          title: 'Technology Jobs',
-          tag: 'Tech Jobs',
-        },
-        {
-          img: require('@/assets/job-detail.png'),
-          title: 'Hotel Jobs',
-          tag: 'Hotel Jobs',
-        },
-
-        {
-          img: require('@/assets/nurse.png'),
-          title: 'Internship Jobs',
-          tag: 'Intern Jobs',
-        },
-        {
-          img: require('@/assets/doctor-jobs.jpg'),
-          title: 'Temporary Jobs',
-          tag: 'Temp Jobs',
-        },
-        {
-          img: require('@/assets/job-detail.png'),
-          title: 'Hotel Jobs',
-          tag: 'Hotel Jobs',
-        },
-      ],
       // filteredCards: [],
       selectedType: 0,
       activeIndex: 1,
@@ -306,20 +276,20 @@ export default {
   computed: {
     ...mapState(['activeTag']),
 
-    trendingBtn() {
-      return [
-        { title: 'Tech Jobs', tag: 'Tech Jobs' },
-        { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
-        { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
-        { title: 'Intern Jobs', tag: 'Intern Jobs' },
-        { title: 'Temp Jobs', tag: 'Temp Jobs' },
-        { title: 'Tech Jobs', tag: 'Tech Jobs' },
-        { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
-        { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
-        { title: 'Intern Jobs', tag: 'Intern Jobs' },
-        { title: 'Temp Jobs', tag: 'Temp Jobs' },
-      ];
-    },
+    // trendingBtn() {
+    //   return [
+    //     { title: 'Tech Jobs', tag: 'Tech Jobs' },
+    //     { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
+    //     { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
+    //     { title: 'Intern Jobs', tag: 'Intern Jobs' },
+    //     { title: 'Temp Jobs', tag: 'Temp Jobs' },
+    //     { title: 'Tech Jobs', tag: 'Tech Jobs' },
+    //     { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
+    //     { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
+    //     { title: 'Intern Jobs', tag: 'Intern Jobs' },
+    //     { title: 'Temp Jobs', tag: 'Temp Jobs' },
+    //   ];
+    // },
     isSmall() {
       return this.screenWidth < 640;
     },
@@ -354,11 +324,19 @@ export default {
       'scrollToCardSection',
       this.scrollToCardSection
     );
+    app.config.globalProperties.$eventBus.$on(
+      'scrollToTrendingSection',
+      this.scrollToTrendingSection
+    );
   },
   beforeUnmount() {
     app.config.globalProperties.$eventBus.$off(
       'scrollToCardSection',
       this.scrollToCardSection
+    );
+    app.config.globalProperties.$eventBus.$off(
+      'scrollToTrendingSection',
+      this.scrollToTrendingSection
     );
     // eventBus.off("filter-card-header", this.filterCards);
   },
@@ -375,6 +353,22 @@ export default {
       const scrollTop =
         window.pageYOffset || document.documentElement.scrollTop;
       const offset = cardRect.top + scrollTop - 300; // Nilai offset yang diinginkan, dalam piksel
+
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth',
+      });
+      // window.scrollBy(0, -scrollOffset);
+    },
+
+    scrollToTrendingSection() {
+      const cardSection = document.getElementById('trending');
+      const cardRect = cardSection.getBoundingClientRect();
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const offset = this.isSmall
+        ? cardRect.top + scrollTop - 330
+        : cardRect.top + scrollTop - 230; // Nilai offset yang diinginkan, dalam piksel
 
       window.scrollTo({
         top: offset,

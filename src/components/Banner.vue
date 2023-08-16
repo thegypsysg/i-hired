@@ -1,5 +1,11 @@
 <template>
-  <div class="bg-image" :class="{ 'bg-image-mobile': isSmall }">
+  <div
+    class="bg-image"
+    :style="{
+      backgroundImage: `url(${$fileURL + appDetails?.app_main_image})`,
+    }"
+    :class="{ 'bg-image-mobile': isSmall }"
+  >
     <v-container
       class="d-flex align-center"
       :class="{ 'banner-desktop': !isSmall, 'banner-mobile': isSmall }"
@@ -55,6 +61,7 @@ import AOS from 'aos';
 export default {
   // eslint-disable-next-line vue/multi-word-component-names, vue/no-reserved-component-names
   name: 'Banner',
+  props: ['appDetails'],
   data() {
     return {
       drawer: false,

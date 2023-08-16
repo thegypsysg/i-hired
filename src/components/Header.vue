@@ -9,8 +9,8 @@
       <div class="logo-img-container d-flex align-center">
         <v-img
           class="logo-img"
-          src="@/assets/logo-i-hired.png"
-          height="30"
+          :src="$fileURL + logo"
+          height="40"
           :class="{ 'ml-8': isWelcome }"
         >
           <template #placeholder>
@@ -56,10 +56,10 @@
         </template>
         <v-list>
           <v-list-item
-            v-for="(item, index) in items"
+            v-for="(item, index) in country"
             :key="index"
             :value="index"
-            @click="itemSelected = item.title"
+            @click="changeItemSelected(item.title)"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
@@ -99,10 +99,10 @@
             </template>
             <v-list>
               <v-list-item
-                v-for="(item, index) in items"
+                v-for="(item, index) in country"
                 :key="index"
                 :value="index"
-                @click="itemSelected = item.title"
+                @click="changeItemSelected(item.title)"
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
@@ -200,6 +200,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import app from '@/util/eventBus';
+import axios from '@/util/axios';
 
 // import eventBus from "@/util/eventBus";
 // import eventBus from "@/util/eventBus";
@@ -228,8 +229,8 @@ export default {
       //   { title: "Overseas Study App", tag: "Overseas Study App" },
       // ],
       drawer: false,
-      itemSelected: 'Singapore',
-      items: [
+      logo: '',
+      country: [
         { title: 'Singapore', path: '#' },
         { title: 'Mumbai', path: '#' },
         { title: 'Goa', path: '#' },
@@ -335,10 +336,10 @@ export default {
     };
   },
   computed: {
+    ...mapState(['itemSelected', 'ativeTag']),
     isSmall() {
       return this.screenWidth < 640;
     },
-    ...mapState(['activeTag']),
     trendingBtn() {
       return [
         { title: 'Tech Jobs', tag: 'Tech Jobs' },
@@ -357,15 +358,54 @@ export default {
   created() {
     window.addEventListener('resize', this.handleResize);
   },
+  mounted() {
+    this.getLogo();
+    this.getCountry();
+  },
   unmounted() {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    changeItemSelected(item) {
+      this.$store.commit('setItemSelected', item);
+    },
     ...mapMutations(['setActiveTag']),
     selectTag(tag) {
       this.setActiveTag(tag); // Menetapkan tag yang dipilih sebagai tag aktif
 
       app.config.globalProperties.$eventBus.$emit('scrollToCardSection');
+    },
+    getLogo() {
+      axios
+        .get(`/app/logo/${this.$appId}`)
+        .then((response) => {
+          const data = response.data.data;
+          // console.log(data);
+          this.logo = data;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+    },
+    getCountry() {
+      axios
+        .get(`/country`)
+        .then((response) => {
+          const data = response.data.data;
+          // console.log(data);
+          this.country = data.map((country) => {
+            return {
+              id: country.country_id,
+              title: country.country_name,
+              path: '#',
+            };
+          });
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
     },
     // emitFilterEvent(tag) {
     //   this.$emit("filter-card", tag);

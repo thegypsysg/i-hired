@@ -2,13 +2,12 @@
   <v-container class="mt-6 footer_lks">
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="3">
-        <h2 class="footer_title">About The Syringe</h2>
+        <h2 class="footer_title">About {{ footerData?.company_name }}</h2>
         <p
           class="footer_paragraph"
-          style="margin-bottom: 16px; margin-top: 34px"
+          style="margin-bottom: 16px; margin-top: 34px; font-size: 16px"
         >
-          The Syringe is a Market Place for Jobs that are specifically on
-          Healthcare around the world.
+          {{ footerData?.company_name + ' is a ' + appDetails1?.app_detail }}
         </p>
         <ul class="footer_social">
           <li>
@@ -18,7 +17,7 @@
               class="mr-2 mdi mdi-map-marker"
               aria-hidden="true"
             ></v-icon>
-            Marine Drive, Singapore
+            {{ footerData?.location }}
           </li>
           <li>
             <v-icon
@@ -27,7 +26,7 @@
               class="mr-2 fa fa-phone"
               aria-hidden="true"
             ></v-icon>
-            +65.91992000
+            {{ footerData?.mobile_number }}
           </li>
           <li>
             <v-icon
@@ -35,7 +34,7 @@
               size="20"
               class="mr-2 fab fa-whatsapp"
             ></v-icon>
-            +65.91992000
+            {{ footerData?.whats_app }}
           </li>
           <li>
             <v-icon
@@ -44,7 +43,9 @@
               class="mr-2 fa fa-envelope"
               aria-hidden="true"
             ></v-icon>
-            <a href="mailto:support@the-gypsy.in">support@the-syringe.com</a>
+            <a :href="`mailto:${footerData?.email_id}`">{{
+              footerData?.email_id
+            }}</a>
           </li>
         </ul>
       </v-col>
@@ -75,67 +76,20 @@
           class="footer_apps"
           style="margin-top: 37px; padding-right: 20px"
         >
-          <v-col cols="4">
+          <v-col v-for="item in categoryCard" :key="item.id" cols="4">
             <p style="margin-bottom: 10px">
-              {{ 'Nursing'.substring(0, 10) + '..' }}
+              {{
+                item.title.length >= 10
+                  ? item.title.substring(0, 10) + '..'
+                  : item.title
+              }}
             </p>
             <div class="our-apps">
               <v-img
                 class="our-apps-img"
                 cover
                 transition="fade-transition"
-                src="@/assets/nurse-jobs.jpg"
-              >
-                <template #placeholder>
-                  <div class="skeleton" />
-                </template>
-              </v-img>
-            </div>
-          </v-col>
-          <v-col cols="4">
-            <p style="margin-bottom: 10px">
-              {{ 'Allied Health'.substring(0, 10) + '..' }}
-            </p>
-            <div class="our-apps">
-              <v-img
-                class="our-apps-img"
-                cover
-                transition="fade-transition"
-                src="@/assets/allied-jobs.jpg"
-              >
-                <template #placeholder>
-                  <div class="skeleton" />
-                </template>
-              </v-img>
-            </div>
-          </v-col>
-          <v-col cols="4">
-            <p style="margin-bottom: 10px">
-              {{ 'Medical / Doctors'.substring(0, 10) + '..' }}
-            </p>
-            <div class="our-apps">
-              <v-img
-                cover
-                class="our-apps-img"
-                transition="fade-transition"
-                src="@/assets/doctor-jobs.jpg"
-              >
-                <template #placeholder>
-                  <div class="skeleton" />
-                </template>
-              </v-img>
-            </div>
-          </v-col>
-          <v-col cols="4">
-            <p style="margin-bottom: 10px">
-              {{ 'Executives'.substring(0, 10) + '..' }}
-            </p>
-            <div class="our-apps">
-              <v-img
-                cover
-                class="our-apps-img"
-                transition="fade-transition"
-                src="@/assets/job-detail-banner.jpg"
+                :src="item.img"
               >
                 <template #placeholder>
                   <div class="skeleton" />
@@ -155,6 +109,7 @@
                 line-height: 19px;
                 text-decoration: none;
               "
+              @click="scrollToTrending"
             >
               View all</a
             >
@@ -186,13 +141,39 @@
     </v-row>
   </v-container>
 
-  <v-footer class="bg-black text-center footer__content">
+  <v-footer
+    class="bg-black text-center footer__content"
+    :class="{ 'mb-16 pb-4': isSmall }"
+  >
     <v-spacer></v-spacer>
+    <div class="footer_text">
+      {{ footerData.copyright }}
+    </div>
     <div style="display: flex; justify-content: center">
-      <v-btn variant="text" color="#FA2964" icon="mdi-facebook" />
-      <v-btn variant="text" color="#FA2964" icon="mdi-twitter" />
-      <v-btn variant="text" color="#FA2964" icon="mdi-instagram" />
-      <v-btn variant="text" color="#FA2964" icon="mdi-youtube" />
+      <v-btn
+        :href="footerData.facebook"
+        variant="text"
+        color="#FA2964"
+        icon="mdi-facebook"
+      />
+      <v-btn
+        :href="footerData.twitter"
+        variant="text"
+        color="#FA2964"
+        icon="mdi-twitter"
+      />
+      <v-btn
+        :href="footerData.instagram"
+        variant="text"
+        color="#FA2964"
+        icon="mdi-instagram"
+      />
+      <v-btn
+        :href="footerData.youtube"
+        variant="text"
+        color="#FA2964"
+        icon="mdi-youtube"
+      />
     </div>
   </v-footer>
   <a
@@ -205,6 +186,9 @@
 </template>
 
 <script>
+import axios from '@/util/axios';
+import app from '@/util/eventBus';
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Footer',
@@ -212,6 +196,23 @@ export default {
   data() {
     return {
       screenWidth: window.innerWidth,
+      categoryCard: [],
+      appDetails1: {
+        app_detail: '',
+      },
+      appDetails2: null,
+      footerData: {
+        company_name: '',
+        location: '',
+        mobile_number: '',
+        whats_app: '',
+        email_id: '',
+        copyright: '',
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        youtube: '',
+      },
     };
   },
   computed: {
@@ -222,10 +223,119 @@ export default {
   created() {
     window.addEventListener('resize', this.handleResize);
   },
+  mounted() {
+    this.getAppContact();
+    this.getAppDetails1();
+    this.getAppDetails2();
+    this.getCategoryCardData();
+  },
   unmounted() {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    scrollToTrending() {
+      app.config.globalProperties.$eventBus.$emit('scrollToTrendingSection');
+    },
+    getCategoryCardData() {
+      // this.isLoading = true;
+      axios
+        .get(`/categories/limit/6/${this.$appId}`)
+        .then((response) => {
+          const data = response.data.data;
+          console.log(data);
+          this.categoryCard = data.map((item, index) => {
+            return {
+              id: index + 1,
+              img: this.$fileURL + item.image || '',
+              title: item.category_name || '',
+            };
+          });
+          // console.log(this.trendingCard);
+
+          // app.config.globalProperties.$eventBus.$emit(
+          //   'update-image',
+          //   this.items
+          // );
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+      // .finally(() => {
+      //   this.isLoading = false;
+      // });
+    },
+    getAppDetails1() {
+      // this.isLoading = true;
+      axios
+        .get(`/app/details/${this.$appId}`)
+        .then((response) => {
+          const data = response.data.data;
+          console.log(data);
+          this.appDetails1.app_detail = data.app_detail || '';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+      // .finally(() => {
+      //   this.isLoading = false;
+      // });
+    },
+    getAppDetails2() {
+      // this.isLoading = true;
+      axios
+        .get(`/categories/active-website/app/${this.$appId}`)
+        .then((response) => {
+          const data = response.data.data;
+          console.log(data);
+          this.appDetails = data.map((item) => {
+            return {
+              ...item,
+              categoryId: item.category_id || 0,
+              categoryName: item.category_name || '',
+              description: item.description || '',
+              image: item.image || '',
+              slug: item.slug || '',
+            };
+          })[0];
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+      // .finally(() => {
+      //   this.isLoading = false;
+      // });
+    },
+    getAppContact() {
+      // this.isLoading = true;
+      axios
+        .get(`/app/contact/${this.$appId}`)
+        .then((response) => {
+          const data = response.data.data;
+          console.log(data);
+          this.footerData = {
+            company_name: data.company_name || '',
+            location: data.location || '',
+            mobile_number: data.mobile_number || '',
+            whats_app: data.whats_app || '',
+            email_id: data.email_id || '',
+            copyright: data.copyright || '',
+            facebook: data.facebook || '',
+            twitter: data.twitter || '',
+            instagram: data.instagram || '',
+            youtube: data.youtube || '',
+          };
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+      // .finally(() => {
+      //   this.isLoading = false;
+      // });
+    },
     handleResize() {
       this.screenWidth = window.innerWidth;
     },
