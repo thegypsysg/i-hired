@@ -45,7 +45,8 @@
             color="#0596d5"
             rounded
             icon
-            size="40"
+            style="height: 50px !important"
+            :size="isSmall ? 30 : 120"
             v-bind="attrs"
             v-on="on"
             @click="previousSlide"
@@ -250,24 +251,6 @@ export default {
   data() {
     return {
       selectedTag: null,
-      // activeTagHeader: null,
-      // trendingBtn: [],
-      //   {
-      //     title: "View All",
-      //   },
-      //   { title: "Promo App", tag: "Promo App" },
-      //   { title: "Alcohol App", tag: "Alcohol App" },
-      //   { title: "Jobs App", tag: "Job App" },
-      //   { title: "On The Run Apps", tag: "On the Run App" },
-      //   { title: "Housing App", tag: "Housing App" },
-      //   { title: "Travel App", tag: "Travel App" },
-      //   { title: "Staycation App", tag: "Staycation App" },
-      //   { title: "Listings App", tag: "Listing App" },
-      //   { title: "Tournaments App", tag: "Tournament App" },
-      //   { title: "Cafe App", tag: "Cafe App" },
-      //   { title: "Overseas Study App", tag: "Overseas Study App" },
-      // ],
-      // filteredCards: [],
       selectedType: 0,
       activeIndex: 1,
       screenWidth: window.innerWidth,
@@ -275,21 +258,6 @@ export default {
   },
   computed: {
     ...mapState(['activeTag']),
-
-    // trendingBtn() {
-    //   return [
-    //     { title: 'Tech Jobs', tag: 'Tech Jobs' },
-    //     { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
-    //     { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
-    //     { title: 'Intern Jobs', tag: 'Intern Jobs' },
-    //     { title: 'Temp Jobs', tag: 'Temp Jobs' },
-    //     { title: 'Tech Jobs', tag: 'Tech Jobs' },
-    //     { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
-    //     { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
-    //     { title: 'Intern Jobs', tag: 'Intern Jobs' },
-    //     { title: 'Temp Jobs', tag: 'Temp Jobs' },
-    //   ];
-    // },
     isSmall() {
       return this.screenWidth < 640;
     },
@@ -300,7 +268,7 @@ export default {
       } else {
         // const searchTextLower = this.search.toLowerCase();
         return this.trendingCard.filter((item) => {
-          return item.tag.includes(this.activeTag);
+          return item.title.includes(this.activeTag);
         });
       }
     },
@@ -311,7 +279,7 @@ export default {
       } else {
         // const searchTextLower = this.search.toLowerCase();
         return this.trendingCard.filter((item) => {
-          return item.tag.includes(this.selectedTag);
+          return item.title.includes(this.selectedTag);
         });
       }
     },
@@ -352,7 +320,7 @@ export default {
       const cardRect = cardSection.getBoundingClientRect();
       const scrollTop =
         window.pageYOffset || document.documentElement.scrollTop;
-      const offset = cardRect.top + scrollTop - 300; // Nilai offset yang diinginkan, dalam piksel
+      const offset = cardRect.top + scrollTop - 320; // Nilai offset yang diinginkan, dalam piksel
 
       window.scrollTo({
         top: offset,

@@ -63,10 +63,9 @@ export default {
         .get(`/categories/${this.$appId}`)
         .then((response) => {
           const data = response.data.data;
-          // console.log(data);
-          this.categoryCard = data.map((item, index) => {
+          this.categoryCard = data.map((item) => {
             return {
-              id: index + 1,
+              id: item.category_id || '',
               img: this.$fileURL + item.image || '',
               desc: item.description || '',
               title: item.category_name || '',

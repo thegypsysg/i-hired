@@ -142,13 +142,12 @@
           </v-btn>
           <v-slide-group v-model="activeTag">
             <v-slide-group-item
-              v-for="(btn, index) in trendingBtn"
+              v-for="btn in trendingBtn"
               :key="btn.tag"
               v-slot="{ isSelected }"
               :value="btn.tag"
             >
               <v-btn
-                v-if="index !== 0 && btn.title != 'View All'"
                 class="sub-menu-btn"
                 :class="{
                   active: isSelected,
@@ -211,23 +210,7 @@ export default {
   props: ['isWelcome'],
   data() {
     return {
-      // selectedTag: null,
-      // trendingBtn: [
-      //   {
-      //     title: "View All",
-      //   },
-      //   { title: "Promo App", tag: "Promo App" },
-      //   { title: "Alcohol App", tag: "Alcohol App" },
-      //   { title: "Jobs App", tag: "Job App" },
-      //   { title: "On The Run Apps", tag: "On the Run App" },
-      //   { title: "Housing App", tag: "Housing App" },
-      //   { title: "Travel App", tag: "Travel App" },
-      //   { title: "Staycation App", tag: "Staycation App" },
-      //   { title: "Listings App", tag: "Listing App" },
-      //   { title: "Tournaments App", tag: "Tournament App" },
-      //   { title: "Cafe App", tag: "Cafe App" },
-      //   { title: "Overseas Study App", tag: "Overseas Study App" },
-      // ],
+      trendingBtn: [],
       drawer: false,
       logo: '',
       country: [
@@ -237,98 +220,7 @@ export default {
         { title: 'Kuala Lumpur', path: '#' },
       ],
 
-      trendingCard: [
-        {
-          img: 'assets/gypsy-1.png',
-          title: 'Mall-e',
-          desc: 'Promotions Happening in Malls',
-          tag: 'Promo App',
-        },
-        {
-          img: 'assets/gypsy-2.png',
-          title: 'Boozards',
-          desc: 'Marketplace for Alcohol, Clubs, Happy Hours',
-          tag: 'Alcohol App',
-        },
-        {
-          img: 'assets/gypsy-3.png',
-          title: 'Flea',
-          desc: 'Promotions Happening in Streets , Office Buildings Gas Stations etc',
-          tag: 'Promo App',
-        },
-        {
-          img: 'assets/gypsy-4.png',
-          title: 'Mendesliga',
-          desc: 'Marketplace for Sports Tournaments.',
-          tag: 'Tournament App',
-        },
-        {
-          img: 'assets/gypsy-5.png',
-          title: 'Cake Run',
-          desc: 'Marketplace for all Types of Cakes.',
-          tag: 'On the Run App',
-        },
-        {
-          img: 'assets/gypsy-6.png',
-          title: 'Cafino',
-          desc: 'Maketplace for Cafes around you.',
-          tag: 'Cafe App',
-        },
-        {
-          img: 'assets/gypsy-7.jpg',
-          title: '4 Walls',
-          desc: 'Marketplace for Housing',
-          tag: 'Housing App',
-        },
-        {
-          img: 'assets/gypsy-8.jpg',
-          title: 'Staycasey',
-          desc: 'Marketplace for Staycation',
-          tag: 'Staycation App',
-        },
-        {
-          img: 'assets/gypsy-9.jpg',
-          title: 'Astalavista',
-          desc: 'Marketplace for Overseas Travel',
-          tag: 'Travel App',
-        },
-        {
-          img: 'assets/gypsy-10.jpg',
-          title: 'i-Study',
-          desc: 'Marketplace for Study Overseas',
-          tag: 'Overseas Study App',
-        },
-        {
-          img: 'assets/gypsy-11.jpg',
-          title: 'Mart-In',
-          desc: 'Marketplace for Mini Mart',
-          tag: 'Mini Mart App',
-        },
-        {
-          img: 'assets/gypsy-12.jpg',
-          title: 'Biryani-Run',
-          desc: 'Marketplace for Biryani',
-          tag: 'On the Run App',
-        },
-        {
-          img: 'assets/gypsy-13.jpg',
-          title: 'i-Hired',
-          desc: 'Marketplace for Jobs',
-          tag: 'Job App',
-        },
-        {
-          img: 'assets/gypsy-14.jpg',
-          title: 'Pizza Run',
-          desc: 'Marketplace for Pizza',
-          tag: 'On the Run App',
-        },
-        {
-          img: 'assets/gypsy-15.jpg',
-          title: 'Listings',
-          desc: 'Marketplace for Listings',
-          tag: 'Listing App',
-        },
-      ],
+      trendingCard: [],
 
       selectedType: 0,
       activeIndex: 1,
@@ -340,20 +232,6 @@ export default {
     isSmall() {
       return this.screenWidth < 640;
     },
-    trendingBtn() {
-      return [
-        { title: 'Tech Jobs', tag: 'Tech Jobs' },
-        { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
-        { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
-        { title: 'Intern Jobs', tag: 'Intern Jobs' },
-        { title: 'Temp Jobs', tag: 'Temp Jobs' },
-        { title: 'Tech Jobs', tag: 'Tech Jobs' },
-        { title: 'Healthcare Jobs', tag: 'Healthcare Jobs' },
-        { title: 'Hotel Jobs', tag: 'Hotel Jobs' },
-        { title: 'Intern Jobs', tag: 'Intern Jobs' },
-        { title: 'Temp Jobs', tag: 'Temp Jobs' },
-      ];
-    },
   },
   created() {
     window.addEventListener('resize', this.handleResize);
@@ -361,6 +239,7 @@ export default {
   mounted() {
     this.getLogo();
     this.getCountry();
+    this.getCategoryCardData();
   },
   unmounted() {
     window.removeEventListener('resize', this.handleResize);
@@ -374,6 +253,44 @@ export default {
       this.setActiveTag(tag); // Menetapkan tag yang dipilih sebagai tag aktif
 
       app.config.globalProperties.$eventBus.$emit('scrollToCardSection');
+    },
+
+    getCategoryCardData() {
+      this.isLoading = true;
+      axios
+        .get(`/categories/${this.$appId}`)
+        .then((response) => {
+          const data = response.data.data;
+
+          this.categoryCard = data.map((item) => {
+            return {
+              id: item.category_id || '',
+              img: this.$fileURL + item.image || '',
+              desc: item.description || '',
+              title: item.category_name || '',
+              path: item.slug || '',
+            };
+          });
+          this.trendingBtn = data.map((item) => {
+            return {
+              title: item.category_name || '',
+              tag: item.category_name || '',
+            };
+          });
+          // console.log(this.trendingCard);
+
+          // app.config.globalProperties.$eventBus.$emit(
+          //   'update-image',
+          //   this.items
+          // );
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
     getLogo() {
       axios
@@ -407,14 +324,6 @@ export default {
           console.log(error);
         });
     },
-    // emitFilterEvent(tag) {
-    //   this.$emit("filter-card", tag);
-    // },
-    // filterCards(tag) {
-    //   this.selectedTag = tag;
-    //   app.config.globalProperties.$eventBus.$emit("filter-card-header", tag);
-    //   // eventBus.emit("filter-card-header", tag);
-    // },
     countCards(tag) {
       const count = this.trendingCard.filter(
         (trend) => trend.tag === tag
