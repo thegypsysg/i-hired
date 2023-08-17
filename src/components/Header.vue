@@ -54,7 +54,7 @@
             <v-icon right dark> mdi-menu-down </v-icon>
           </v-btn>
         </template>
-        <v-list>
+        <!-- <v-list>
           <v-list-item
             v-for="(item, index) in country"
             :key="index"
@@ -63,7 +63,7 @@
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
-        </v-list>
+        </v-list> -->
       </v-menu>
     </div>
     <v-btn v-if="!isWelcome" elevation="0" class="btn_sign__up" to="/welcome">
@@ -97,7 +97,7 @@
                 <v-icon right dark> mdi-menu-down </v-icon>
               </v-btn>
             </template>
-            <v-list>
+            <!-- <v-list>
               <v-list-item
                 v-for="(item, index) in country"
                 :key="index"
@@ -106,7 +106,7 @@
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
-            </v-list>
+            </v-list> -->
           </v-menu>
         </div>
         <form
